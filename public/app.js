@@ -4,14 +4,12 @@ const promptEl = document.getElementById('prompt');
 const sendButton = document.getElementById('send-button');
 const statusText = document.getElementById('status-text');
 const statusDot = document.getElementById('status-dot');
-const modelNameEl = document.querySelector('.model-name');
 const template = document.getElementById('message-template');
 const historyEl = document.getElementById('history');
 const newChatButton = document.getElementById('new-chat');
 
 const backgroundUpload = document.getElementById('background-upload');
 const clearBackgroundButton = document.getElementById('clear-background');
-const modelSelect = document.getElementById('model-select');
 const systemCardInput = document.getElementById('system-card');
 const memoryInput = document.getElementById('memory-input');
 const personaNameInput = document.getElementById('persona-name');
@@ -24,14 +22,8 @@ const personaEnabledCheckbox = document.getElementById('persona-enabled');
 const STORAGE_KEY = 'local-gpt-conversations-v1';
 const SETTINGS_KEY = 'local-gpt-settings-v1';
 
-const MODEL_MIGRATIONS = {
-  'GTP-5-mini': 'GPT-5-mini',
-  'GPT-nano': 'GPT-5-nano',
-};
-
 const defaultSettings = {
   backgroundImage: '',
-  model: 'GPT-5',
   systemCard: '',
   memory: '',
   personas: [],
@@ -77,20 +69,7 @@ function updateSettingsInputs() {
   systemCardInput.value = settings.systemCard;
   memoryInput.value = settings.memory;
   personaEnabledCheckbox.checked = settings.personaEnabled;
-  if (MODEL_MIGRATIONS[settings.model]) {
-    settings.model = MODEL_MIGRATIONS[settings.model];
-    saveSettings();
-  }
-  if (!modelSelect.querySelector(`option[value="${settings.model}"]`)) {
-    settings.model = defaultSettings.model;
-    saveSettings();
-  }
-  modelSelect.value = settings.model;
   renderPersonas();
-}
-
-function updateModelDisplay() {
-  modelNameEl.textContent = settings.model;
 }
 
 function renderPersonas() {
@@ -165,12 +144,6 @@ memoryInput.addEventListener('input', (event) => {
   saveSettings();
 });
 
-modelSelect.addEventListener('change', (event) => {
-  settings.model = event.target.value;
-  saveSettings();
-  updateModelDisplay();
-});
-
 personaEnabledCheckbox.addEventListener('change', (event) => {
   settings.personaEnabled = event.target.checked;
   saveSettings();
@@ -219,40 +192,28 @@ deletePersonaButton.addEventListener('click', () => {
   renderPersonas();
 });
 
-function buildChatPayload(conversationMessages) {
-  const messages = [];
-  if (Array.isArray(conversationMessages)) {
-    for (const message of conversationMessages) {
-      if (!message || typeof message.role !== 'string') continue;
-      if (typeof message.content !== 'string') continue;
-      messages.push({ role: message.role, content: message.content });
-    }
-  }
-
-  const systemParts = [];
+function buildRequestMessages(conversationMessages) {
+  const result = [];
   const systemCard = settings.systemCard.trim();
   const memory = settings.memory.trim();
 
   if (systemCard) {
-    systemParts.push(systemCard);
+    result.push({ role: 'system', content: systemCard });
   }
 
   if (memory) {
-    systemParts.push(`共有メモリ:\n${memory}`);
+    result.push({ role: 'system', content: `共有メモリ:\n${memory}` });
   }
 
   if (settings.personaEnabled && settings.activePersonaId) {
     const persona = settings.personas.find((item) => item.id === settings.activePersonaId);
     if (persona) {
       const personaPrompt = `あなたは「${persona.name}」というペルソナになりきって応答してください。\n${persona.description}`;
-      systemParts.push(personaPrompt);
+      result.push({ role: 'system', content: personaPrompt });
     }
   }
 
-  return {
-    system: systemParts.join('\n\n'),
-    messages,
-  };
+  return result.concat(conversationMessages);
 }
 
 function loadConversations() {
@@ -415,130 +376,41 @@ formEl.addEventListener('submit', async (event) => {
   sendButton.disabled = true;
   updateStatus('typing');
 
-  const assistantFragment = template.content.cloneNode(true);
-  const typingIndicator = assistantFragment.querySelector('.message');
-  const typingAvatar = assistantFragment.querySelector('.avatar');
-  const typingContent = assistantFragment.querySelector('.content');
-  typingIndicator.classList.add('assistant');
-  typingAvatar.textContent = 'GPT';
-  typingContent.innerHTML = '<div class="typing-indicator"><span></span><span></span><span></span></div>';
-  messagesEl.appendChild(assistantFragment);
+  const typingIndicator = document.createElement('div');
+  typingIndicator.className = 'message assistant';
+  typingIndicator.innerHTML = `
+    <div class="avatar">GPT</div>
+    <div class="content">
+      <div class="typing-indicator"><span></span><span></span><span></span></div>
+    </div>
+  `;
+  messagesEl.appendChild(typingIndicator);
   messagesEl.scrollTop = messagesEl.scrollHeight;
 
   try {
-    const { system, messages: requestMessages } = buildChatPayload(active.messages);
-    const payload = {
-      messages: requestMessages,
-      model: settings.model,
-      system,
-    };
+    const response = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ messages: buildRequestMessages(active.messages) }),
+    });
 
-    if (!window.EventSource) {
-      const response = await fetch('/api/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
-
-      if (!response.ok) {
-        throw new Error(`API request failed: ${response.status}`);
-      }
-
-      const assistantMessage = await response.json();
-      const spinner = typingIndicator.querySelector('.typing-indicator');
-      if (spinner) spinner.remove();
-      const contentEl = typingIndicator.querySelector('.content');
-      contentEl.textContent = assistantMessage.content;
-      active.messages.push(assistantMessage);
-      saveConversations();
-      updateStatus('idle');
-      sendButton.disabled = false;
-      messagesEl.scrollTop = messagesEl.scrollHeight;
-      return;
+    if (!response.ok) {
+      throw new Error(`API request failed: ${response.status}`);
     }
 
-    const assistantMessage = { role: 'assistant', content: '' };
+    const assistantMessage = await response.json();
+    typingIndicator.remove();
+
     active.messages.push(assistantMessage);
-    const spinner = typingIndicator.querySelector('.typing-indicator');
-    const contentEl = typingIndicator.querySelector('.content');
-    if (spinner) spinner.remove();
-    contentEl.textContent = '';
-
-    let completed = false;
-    let accumulatedText = '';
-
-    const finalizeSuccess = () => {
-      if (completed) return;
-      completed = true;
-      saveConversations();
-      updateStatus('idle');
-      sendButton.disabled = false;
-      messagesEl.scrollTop = messagesEl.scrollHeight;
-    };
-
-    const finalizeError = (message) => {
-      if (completed) return;
-      completed = true;
-      if (assistantMessage.content) {
-        contentEl.textContent = assistantMessage.content;
-      } else {
-        const index = active.messages.indexOf(assistantMessage);
-        if (index !== -1) {
-          active.messages.splice(index, 1);
-        }
-        typingIndicator.remove();
-      }
-      saveConversations();
-      appendSystemMessage(message || '申し訳ありません。応答の取得中にエラーが発生しました。');
-      updateStatus('error');
-      sendButton.disabled = false;
-      messagesEl.scrollTop = messagesEl.scrollHeight;
-    };
-
-    const params = new URLSearchParams();
-    params.set('payload', JSON.stringify(payload));
-    const eventSource = new EventSource(`/api/chat/stream?${params.toString()}`);
-
-    eventSource.addEventListener('message', (event) => {
-      if (!event.data) return;
-      let data;
-      try {
-        data = JSON.parse(event.data);
-      } catch (err) {
-        console.warn('Failed to parse stream chunk', err);
-        return;
-      }
-
-      if (data.error) {
-        eventSource.close();
-        finalizeError(typeof data.error === 'string' ? data.error : undefined);
-        return;
-      }
-
-      if (typeof data.delta === 'string') {
-        accumulatedText += data.delta;
-        assistantMessage.content = accumulatedText;
-        contentEl.textContent = accumulatedText;
-        messagesEl.scrollTop = messagesEl.scrollHeight;
-      }
-
-      if (data.done) {
-        eventSource.close();
-        finalizeSuccess();
-      }
-    });
-
-    eventSource.addEventListener('error', () => {
-      eventSource.close();
-      finalizeError();
-    });
-
-    return;
+    addMessageToDOM(assistantMessage);
+    saveConversations();
+    updateStatus('idle');
   } catch (error) {
     console.error(error);
     typingIndicator.remove();
     appendSystemMessage('申し訳ありません。応答の取得中にエラーが発生しました。');
     updateStatus('error');
+  } finally {
     sendButton.disabled = false;
     messagesEl.scrollTop = messagesEl.scrollHeight;
   }
@@ -553,7 +425,6 @@ renderHistory();
 renderMessages();
 applyBackground();
 updateSettingsInputs();
-updateModelDisplay();
 
 // Submit with Enter but allow Shift+Enter for newline
 promptEl.addEventListener('keydown', (event) => {
