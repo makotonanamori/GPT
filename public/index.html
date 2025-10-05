@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Local GPT Chat</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-container" id="app-container">
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          <h1>Local GPT</h1>
+          <button id="new-chat" class="secondary-button">新しいチャット</button>
+        </div>
+        <section class="settings" id="settings">
+          <h2>設定</h2>
+          <div class="settings-group">
+            <label class="file-input-label" for="background-upload">
+              背景画像をアップロード
+              <input type="file" id="background-upload" accept="image/*" />
+            </label>
+            <button type="button" id="clear-background" class="secondary-button small-button">
+              背景をリセット
+            </button>
+          </div>
+          <div class="settings-group">
+            <label for="model-select">モデル</label>
+            <select id="model-select">
+              <option value="GPT-5">GPT-5</option>
+              <option value="GPT-5-mini">GPT-5-mini</option>
+              <option value="GPT-5-nano">GPT-5-nano</option>
+              <option value="GPT-4.1">GPT-4.1</option>
+            </select>
+          </div>
+          <div class="settings-group">
+            <label for="system-card">システムカード</label>
+            <textarea
+              id="system-card"
+              rows="3"
+              placeholder="アシスタントの振る舞いを指示する文章を入力してください"
+            ></textarea>
+          </div>
+          <div class="settings-group">
+            <label for="memory-input">メモリ</label>
+            <textarea
+              id="memory-input"
+              rows="3"
+              placeholder="会話に活用したいメモリを入力してください"
+            ></textarea>
+          </div>
+          <div class="settings-group persona-settings">
+            <div class="persona-header">
+              <h3>ペルソナ</h3>
+              <label class="toggle">
+                <input type="checkbox" id="persona-enabled" />
+                <span class="toggle-track"></span>
+                <span class="toggle-label">有効</span>
+              </label>
+            </div>
+            <div class="persona-form">
+              <input type="text" id="persona-name" placeholder="ペルソナ名" />
+              <textarea
+                id="persona-description"
+                rows="2"
+                placeholder="ペルソナの詳細"
+              ></textarea>
+              <button type="button" id="add-persona" class="primary-button">登録</button>
+            </div>
+            <div class="persona-list">
+              <label for="persona-select">利用するペルソナ</label>
+              <select id="persona-select"></select>
+              <button type="button" id="delete-persona" class="secondary-button small-button">
+                削除
+              </button>
+            </div>
+          </div>
+        </section>
+        <div id="history" class="history"></div>
+      </aside>
+      <main class="chat-area">
+        <header class="chat-header">
+          <div class="model-info">
+            <span class="model-name">GPT-5</span>
+            <span class="status-dot" id="status-dot"></span>
+            <span id="status-text">待機中</span>
+          </div>
+        </header>
+        <section id="messages" class="messages" aria-live="polite"></section>
+        <form id="chat-form" class="input-area" autocomplete="off">
+          <textarea
+            id="prompt"
+            rows="1"
+            placeholder="メッセージを入力してください (Shift+Enterで改行)"
+            required
+          ></textarea>
+          <button type="submit" id="send-button" class="primary-button" aria-label="送信">
+            送信
+          </button>
+        </form>
+      </main>
+    </div>
+    <template id="message-template">
+      <div class="message">
+        <div class="avatar"></div>
+        <div class="content"></div>
+      </div>
+    </template>
+    <script src="app.js" type="module"></script>
+  </body>
+</html>
