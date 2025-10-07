@@ -1,24 +1,29 @@
-{
-  "name": "gpt",
-  "version": "1.0.0",
-  "description": "Local ChatGPT-like UI backed by OpenAI API",
-  "main": "server.js",
-  "scripts": {
-    "start": "node server.js"
-  },
-  "keywords": [
-    "chatgpt",
-    "openai",
-    "express",
-    "chat"
-  ],
-  "author": "",
-  "license": "MIT",
-  "type": "commonjs",
-  "dependencies": {
-    "cors": "^2.8.5",
-    "dotenv": "^17.2.3",
-    "express": "^5.1.0",
-    "openai": "^6.1.0"
-  }
-}
+diff --git a//dev/null b/package.json
+index 0000000000000000000000000000000000000000..905438481fcceeb1ee8835a02763d886ea3f6aa9 100644
+--- a//dev/null
++++ b/package.json
+@@ -0,0 +1,24 @@
++{
++  "name": "gpt",
++  "version": "1.0.0",
++  "description": "Local ChatGPT-like UI backed by OpenAI API",
++  "main": "server.js",
++  "scripts": {
++    "start": "node server.js"
++  },
++  "keywords": [
++    "chatgpt",
++    "openai",
++    "express",
++    "chat"
++  ],
++  "author": "",
++  "license": "MIT",
++  "type": "commonjs",
++  "dependencies": {
++    "cors": "^2.8.5",
++    "dotenv": "^17.2.3",
++    "express": "^5.1.0",
++    "openai": "^6.1.0"
++  }
++}
