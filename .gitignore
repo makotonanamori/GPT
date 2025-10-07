@@ -1,4 +1,9 @@
-node_modules/
-.env
-npm-debug.log*
-.DS_Store
+diff --git a//dev/null b/.gitignore
+index 0000000000000000000000000000000000000000..cc0f296f4546af922f9ec0e88391fcc8413f1078 100644
+--- a//dev/null
++++ b/.gitignore
+@@ -0,0 +1,4 @@
++node_modules/
++.env
++npm-debug.log*
++.DS_Store
