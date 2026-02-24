@@ -2,3 +2,321 @@
 
 ## Introduction
 This document details the dress-up worlds system for our application.
+
+# 🎭 Dress-Up Worlds System
+
+### Procedural Scenario Generator for Fixed Characters Across Variable Worlds
+
+A session-based short story generation system that places fixed characters into different world settings to produce self-contained narratives.
+
+Each session generates a completely independent story.
+The user acts only as an observer.
+
+---
+
+## 📖 Overview
+
+**Dress-Up Worlds** automatically generates short fiction by recombining constant characters with variable world conditions and narrative parameters.
+
+No continuity exists between sessions.
+Each story is a standalone artifact.
+
+> Fixed characters × Variable worlds = Story
+
+---
+
+## 🎯 Purpose
+
+* Explore interactions between characters and environments
+* Produce one-off narrative experiences
+* Achieve infinite recombination replayability
+* Function as pure expression without user intervention
+
+---
+
+## 🧠 Core Concept
+
+Characters remain constant across sessions.
+Only the world context changes.
+
+Abilities, values, and roles are reinterpreted according to the rules of each world.
+
+---
+
+## 👁️ User Role
+
+The user is strictly an observer.
+
+* Cannot influence events
+* Cannot choose options
+* Does not exist within the story world
+* Does not become a character
+
+Allowed input:
+
+```
+"Continue"
+```
+
+This only advances output; it does not alter content.
+
+---
+
+## 🔒 Session Characteristics
+
+* Fully discontinuous
+* Single-use narrative
+* No state retention after completion
+* Cannot resume a finished story
+
+---
+
+## 🧩 System Components
+
+### 1. Fixed Characters
+
+Predefined character set that does not change between sessions.
+
+Examples:
+
+* Warrior
+* Mage
+* Thief
+* Scientist
+* Royalty
+* AI entity
+
+---
+
+### 2. World Setting
+
+Defines environment, physical laws, culture, ethics, and technological level.
+
+Examples:
+
+* High fantasy
+* Contemporary society
+* Near-future sci-fi
+* School setting
+* Utopian world
+* Dystopia
+* Mythological realm
+
+---
+
+### 3. Scenario Keywords
+
+Core thematic elements selected randomly each session.
+
+Recommended pool size: 100+
+Selection count: 3
+
+Examples:
+
+* Betrayal
+* Festival
+* Contract
+* Snow
+* Child
+* Poison
+* Throne
+* Memory
+* Letter
+* Ghost
+
+---
+
+### 4. Narrative Style
+
+Defines presentation format.
+
+Examples:
+
+* Mythic tone
+* Diary format
+* Official report
+* Third-person narration
+* First-person monologue
+* Fairy tale
+* Documentary style
+* Dark humor
+
+---
+
+### 5. Story Structure
+
+Fixed four-part structure:
+
+1. Introduction — Situation setup
+2. Development — Escalation
+3. Twist — Conflict or transformation
+4. Conclusion — Resolution
+
+---
+
+## ⚙️ Internal Generation Flow
+
+### Session Initialization
+
+Random selection (external RNG recommended):
+
+1. World setting
+2. Protagonist character
+3. Three scenario keywords
+4. Narrative style
+
+---
+
+### Synopsis Generation (Internal)
+
+Using selected elements:
+
+* Overall story outline
+* Structure for each act
+
+This information is not shown to the user.
+
+---
+
+### Main Output Generation
+
+The system generates the story in four parts based on the synopsis.
+
+---
+
+## ⌨️ User Input Specification
+
+### Allowed
+
+```
+Continue
+```
+
+Used only to request the next section.
+
+---
+
+### Prohibited
+
+* Directing plot developments
+* Controlling characters
+* Changing the world
+* Adding new settings
+* Meta interference
+
+---
+
+## 🏁 Session Termination
+
+A session ends when:
+
+* The fourth part (Conclusion) is delivered, OR
+* The narrative naturally closes early
+
+After termination:
+
+* No continuation allowed
+* Restart creates a completely new session
+
+---
+
+## 🧭 Design Philosophy
+
+### ■ Discontinuity
+
+Each narrative exists independently.
+
+---
+
+### ■ Character Invariance
+
+Characters do not evolve across sessions.
+
+---
+
+### ■ World Dominance
+
+World conditions drive the story.
+
+---
+
+### ■ Observational Experience
+
+The user witnesses events rather than shaping them.
+
+---
+
+## 🎲 Sources of Narrative Interest
+
+* Reinterpretation of abilities
+* Social mismatch between character and world
+* Environmental reactions
+* Value conflicts
+* Dramatic tension from incompatibility
+
+---
+
+## 🧪 Optional Extensions
+
+### Hidden Theme
+
+An internal overarching motif guiding the story.
+
+---
+
+### Keyword Role Assignment
+
+Three selected keywords may be mapped as:
+
+* Core theme
+* Obstacle
+* Symbol
+
+---
+
+### Narrator Reliability
+
+* Reliable
+* Limited
+* Misinterpreting
+* Deceptive
+
+---
+
+### World Agency
+
+Degree to which the world accepts or rejects the protagonist.
+
+---
+
+## 🧰 Technical Requirements
+
+* External randomness recommended (e.g., Python RNG)
+* System resets each session
+* No persistent state storage required
+
+---
+
+## 📦 Intended Use Cases
+
+* Short fiction generation
+* Worldbuilding experiments
+* Character stress testing
+* Creative inspiration
+* Entertainment
+
+---
+
+## ⭐ System Characteristics
+
+✔ Extremely high replayability
+✔ Low preparation cost
+✔ Self-contained outputs
+✔ No user intervention required
+✔ Maximizes generative AI capabilities
+
+---
+
+## 🕯️ Concept Statement
+
+> Dress-Up Worlds is a narrative apparatus that throws fixed beings into different universes and observes the resulting interactions.
