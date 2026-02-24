@@ -2,3 +2,290 @@
 
 ## Summary
 An overview of the story and characters in The Manor and The Maid.
+
+# 🏛️ The Manor & The Maid
+
+### Long-Session State-Driven Simulation for LLM
+
+A state-based interactive simulation where the player acts as a maid managing a mysterious manor.
+Designed specifically for long sessions without narrative collapse.
+
+---
+
+## 📖 Overview
+
+**The Manor & The Maid** is a persistent simulation system in which the world evolves based solely on current state parameters rather than historical logs.
+
+The player explores the manor, performs duties, and influences the environment through actions.
+All events and descriptions are generated dynamically from the present state.
+
+> The manor does not remember stories.
+> It remembers distortions.
+
+---
+
+## 🎯 Design Goals
+
+* Enable **indefinite session length**
+* Avoid dependency on conversation history
+* Preserve unpredictability and live generation
+* Maintain system stability over time
+* Leverage LLM strengths (interpretation & variation)
+
+---
+
+## 🧠 Core Principles
+
+### ■ Present State Is Truth
+
+* No need to reference past actions
+* History is not stored
+* Only accumulated effects remain
+* Narrative continuity emerges from state, not memory
+
+---
+
+### ■ One-Way Progression (Irreversible)
+
+```
+Action → State Change → New Situation
+```
+
+The world moves forward without resets.
+
+---
+
+### ■ State-Driven Generation
+
+All descriptions, events, and atmosphere are derived from the current parameters.
+
+---
+
+## 🔁 Core Loop
+
+```
+1. Display current state (UI)
+2. Player inputs an action
+3. System updates parameters
+4. Check event triggers
+5. Generate description based on state
+6. Repeat
+```
+
+---
+
+## 📊 State Parameters (Example)
+
+Keep ≤ 5 parameters for stability.
+
+```
+STATE:
+Mood            0–10
+Order           0–10
+Anomaly         0–10
+Secrets         0–10
+Decay           0–10  (prefer irreversible)
+```
+
+### Parameter Notes
+
+* Numeric or tiered values
+* Can influence each other
+* Some may only increase over time
+
+---
+
+## 🔄 Optional Interactions
+
+Example dynamics:
+
+* Secrets ↑ → Mood ↓
+* Anomaly ↑ → Order ↓
+* Order ↓ → Event intensity ↑
+
+These interactions prevent stagnation during long sessions.
+
+---
+
+## 🖥️ Mandatory UI Output (Every Turn)
+
+```
+[MANOR STATUS]
+Mood: 4/10
+Order: 6/10
+Anomaly: 3/10
+Secrets: 5/10
+Decay: 2/10
+```
+
+Re-displaying state each turn prevents drift and loss.
+
+---
+
+## 🎮 Player Actions
+
+Free-form input allowed.
+
+Examples:
+
+* Explore a room
+* Clean an area
+* Serve guests
+* Observe inhabitants
+* Open doors
+* Wait / do nothing
+
+LLM interprets actions into state changes.
+
+---
+
+## ⚡ Event System
+
+### Trigger Conditions
+
+Events activate when thresholds are met.
+
+```
+IF Anomaly ≥ 7 → Event E001
+IF Order ≤ 2 → Event E002
+```
+
+---
+
+### Event Handling
+
+* Managed via fixed IDs
+* Content retrieved from RAG or internal database
+* Typically one-time triggers
+
+```
+EVENT_FLAGS:
+E001 = Fired
+E002 = NotYet
+```
+
+---
+
+## 📂 Recommended Event Document Structure
+
+```
+[HARD RULES]
+Non-negotiable facts
+
+[SCENE FACTS]
+Situational details
+
+[OUTPUT GUIDELINES]
+Tone or presentation hints
+```
+
+Separating sections reduces contradictions.
+
+---
+
+## ✍️ Description Generation
+
+Output is generated from:
+
+* Current state
+* Triggered events
+* Player action
+
+Past turns are not required.
+
+---
+
+## ♾️ Long-Session Stability Mechanisms
+
+### ■ Parameter Circulation
+
+Prevent permanent saturation.
+
+Example loop:
+
+```
+Anomaly ↑ → Order ↓ → Maintenance actions → Anomaly ↓
+```
+
+---
+
+### ■ Irreversible Elements
+
+Provide long-term gravity.
+
+Examples:
+
+* Structural Decay
+* Contract Corruption
+* Contamination
+* Wear and tear
+
+---
+
+### ■ Cyclical Factors (Optional)
+
+Time-based influence:
+
+* Night → Anomaly increases
+* Morning → Order increases
+* Visitor cycles
+
+Creates autonomous world motion.
+
+---
+
+## 🏁 Ending Conditions (Optional)
+
+* Extreme parameter values
+* Special events triggered
+* Player-initiated termination
+
+System can also run indefinitely.
+
+---
+
+## 🤖 Why LLM Is Essential
+
+This system benefits uniquely from generative AI:
+
+* Same state → varied descriptions
+* Free-form action interpretation
+* Emergent narrative without scripting
+* Practically infinite replayability
+
+Traditional engines struggle to reproduce this flexibility.
+
+---
+
+## 🏗️ Minimal Implementation Requirements
+
+### Required
+
+* State parameters
+* Action input handling
+* State update logic
+* Dynamic text generation
+
+### Recommended
+
+* Event ID management
+* Irreversible parameters
+* Parameter interaction rules
+
+---
+
+## 🧩 Possible Extensions
+
+* Emergent manor personality
+* NPC state systems
+* Ritualized household mechanics
+* Style shifts based on corruption/anomaly
+* Multiple endings
+* External persistence
+
+---
+
+## 🕯️ Concept Statement
+
+> The maid does not guide the story.
+> She maintains the conditions under which stories occur.
